@@ -2,11 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RegistrationReqModel } from 'src/models/registration.req.model';
 import { RegistrationRespModel } from 'src/models/registration.resp.model';
-import { Repository } from 'typeorm';
+import { MoreThanOrEqual, Repository } from 'typeorm';
 import { User } from './user';
 import { CurrentUser } from 'src/models/current.users';
 import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
+import * as randomToken from 'rand-token';
+import * as moment from 'moment';
 
 @Injectable()
 export class UsersService {
@@ -91,6 +93,39 @@ export class UsersService {
       return null;
     }
 
+    let currentUser = new CurrentUser();
+    currentUser.userId = user.userId;
+    currentUser.firstName = user.firstName;
+    currentUser.lastName = user.lastName;
+    currentUser.email = user.email;
+
+    return currentUser;
+  }
+
+  //   generate refresh token
+  public async getRefreshToken(userId: number): Promise<string> {
+    const userDataToUpdate = {
+      refreshToken: randomToken.generate(16),
+      refreshTokenExp: moment().day(1).format('YYYY/MM/DD'),
+    };
+
+    await this.user.update(userId, userDataToUpdate);
+    return userDataToUpdate.refreshToken;
+  }
+
+  public async validRefreshToken(
+    email: string,
+    refreshToken: string,
+  ): Promise<CurrentUser> {
+    const currentDate = moment().format('YYYY/MM/DD');
+    let user = await this.user.findOneBy({
+      email: email,
+      refreshToken: refreshToken,
+      refreshTokenExp: MoreThanOrEqual(currentDate),
+    });
+    if (!user) {
+      return null;
+    }
     let currentUser = new CurrentUser();
     currentUser.userId = user.userId;
     currentUser.firstName = user.firstName;

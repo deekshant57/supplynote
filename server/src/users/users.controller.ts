@@ -28,9 +28,40 @@ export class UsersController {
   async login(@Req() req, @Res({ passthrough: true }) res: Response) {
     const token = await this.userService.getJwtToken(req.user as CurrentUser);
 
+    const refreshToken = await this.userService.getRefreshToken(
+      req.user.userId,
+    );
+
     const secretData = {
       token,
-      refreshToken: '',
+      refreshToken,
+    };
+
+    res.cookie('auth-cookie', secretData, { httpOnly: true });
+    return { msg: 'success' };
+  }
+
+  //   shorten-url endpoint
+  @Get('shorten-url')
+  @UseGuards(AuthGuard('jwt'))
+  async movies(@Req() req) {
+    return ['Hello World'];
+  }
+
+  // endpont to get the refresh token
+  @Get('refresh-tokens')
+  @UseGuards(AuthGuard('refresh'))
+  async regenerateTokens(
+    @Req() req,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const token = await this.userService.getJwtToken(req.user as CurrentUser);
+    const refreshToken = await this.userService.getRefreshToken(
+      req.user.userId,
+    );
+    const secretData = {
+      token,
+      refreshToken,
     };
 
     res.cookie('auth-cookie', secretData, { httpOnly: true });

@@ -7,12 +7,13 @@ import { PassportModule } from '@nestjs/passport';
 import { LocalStrategy } from './local.strategy';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './jwt.strategy';
+import { RefreshStrategy } from './refresh.strategy';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),
     PassportModule,
-    JwtStrategy,
+
     JwtModule.register({
       secret: 'My random secret key never let others',
       signOptions: {
@@ -20,7 +21,7 @@ import { JwtStrategy } from './jwt.strategy';
       },
     }),
   ],
-  providers: [UsersService, LocalStrategy],
+  providers: [UsersService, LocalStrategy, JwtStrategy, RefreshStrategy],
   controllers: [UsersController],
 })
 export class UsersModule {}
