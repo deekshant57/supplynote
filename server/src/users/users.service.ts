@@ -42,9 +42,9 @@ export class UsersService {
       return 'Email already exist';
     }
 
-    if (regModel.password !== regModel.confirmPassword) {
-      return 'Confirm password not matching';
-    }
+    // if (regModel.password !== regModel.confirmPassword) {
+    //   return 'Confirm password not matching';
+    // }
     return '';
   }
 

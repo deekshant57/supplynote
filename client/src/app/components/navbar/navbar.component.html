@@ -1,0 +1,14 @@
+<nav class="flex justify-between p-4 bg-zinc-800 text-white">
+  <div>
+    <a routerLink="/">My App</a>
+  </div>
+  <div>
+    <div *ngIf="!isLoggedIn()">
+      <a class="mx-4" routerLink="/login">Login</a>
+      <a class="mx-4" routerLink="/register">Register</a>
+    </div>
+  </div>
+  <div *ngIf="isLoggedIn()">
+    <a class="mx-4" (click)="handleLogout()">Logout</a>
+  </div>
+</nav>

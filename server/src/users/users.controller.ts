@@ -64,7 +64,7 @@ export class UsersController {
       refreshToken,
     };
 
-    res.cookie('auth-cookie', secretData, { httpOnly: true });
+    // res.cookie('auth-cookie', secretData, { httpOnly: true });
     return { msg: 'success' };
   }
 }
